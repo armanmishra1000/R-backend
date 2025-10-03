@@ -6,6 +6,10 @@ import { registerChatRoute } from "./routes/chat";
 import { registerAuthRoutes } from "./routes/auth";
 
 const app = express();
+
+// Trust proxy for secure cookies behind TLS-terminating proxies
+app.set("trust proxy", 1);
+
 app.use(cors({
   origin: true, // Allow all origins in development
   credentials: true
