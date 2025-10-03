@@ -4,6 +4,12 @@ import { processActions } from "../services/actionProcessor";
 import { requireAuth } from "../middleware/auth";
 import type { ChatMessage } from "../types/chat";
 
+/**
+ * Register the POST /chat endpoint (protected by authentication) which accepts a sequence of chat messages,
+ * invokes the main agent to produce a reply and actions, and streams the reply, action events, and a completion or error event via Server-Sent Events.
+ *
+ * @param app - Express Router to which the chat route will be attached
+ */
 export function registerChatRoute(app: Router) {
   app.post("/chat", requireAuth, async (req: Request, res: Response) => {
     const { messages } = req.body as { messages: ChatMessage[] };
