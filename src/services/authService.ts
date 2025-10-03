@@ -25,9 +25,14 @@ export const authenticateUser = async (email: string, password: string) => {
 };
 
 export const issueToken = (user: UserRow): string => {
-  return jwt.sign({ sub: user.id }, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN } as jwt.SignOptions);
+  return jwt.sign({ sub: user.id }, env.JWT_SECRET, {
+    expiresIn: env.JWT_EXPIRES_IN,
+    algorithm: "HS256",
+  } as jwt.SignOptions);
 };
 
 export const verifyToken = (token: string) => {
-  return jwt.verify(token, env.JWT_SECRET) as { sub: string; iat: number; exp: number };
+  return jwt.verify(token, env.JWT_SECRET, {
+    algorithms: ["HS256"],
+  }) as { sub: string; iat: number; exp: number };
 };
