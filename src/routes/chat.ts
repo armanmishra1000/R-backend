@@ -1,10 +1,11 @@
 import { Router, type Request, type Response } from "express";
 import { runMainAgent } from "../agents/mainAgent";
 import { processActions } from "../services/actionProcessor";
+import { requireAuth } from "../middleware/auth";
 import type { ChatMessage } from "../types/chat";
 
 export function registerChatRoute(app: Router) {
-  app.post("/chat", async (req: Request, res: Response) => {
+  app.post("/chat", requireAuth, async (req: Request, res: Response) => {
     const { messages } = req.body as { messages: ChatMessage[] };
     console.log("[CHAT ROUTE] → Received request with", messages.length, "messages");
     console.log("[CHAT ROUTE] → Last message:", messages[messages.length - 1]);
