@@ -1,6 +1,11 @@
 import '../src/config/env.ts';
 import { runMainAgent } from '../src/agents/mainAgent.ts';
 import { processActions } from '../src/services/actionProcessor.ts';
+/**
+ * Runs an integration test of the main agent flow using a preset user message, logs the agent decision, and processes actions while logging each sub-agent event.
+ *
+ * This function constructs a single user message requesting WordPress plugin leads, invokes the main agent to obtain a decision, prints the decision, and then processes the decision's actions while printing each resulting sub-agent event.
+ */
 async function main() {
     const messages = [
         { role: 'user', content: 'Find 2 WordPress plugin leads from r/forhire with e-commerce focus.' }
