@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "migrate": "tsx scripts/runMigrations.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "test:subagent": "tsx scripts/test-subagent.ts"
