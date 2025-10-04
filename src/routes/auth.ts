@@ -71,8 +71,7 @@ export const registerAuthRoutes = (app: Router) => {
       // Check if it's a JWT-related error (expected auth failures)
       if (err.name === 'TokenExpiredError' ||
           err.name === 'JsonWebTokenError' ||
-          err.name === 'NotBeforeError' ||
-          err.message.includes('jwt')) {
+          err.name === 'NotBeforeError') {
         // Expected token verification failures - don't log, just return null
         return res.json(null);
       }
