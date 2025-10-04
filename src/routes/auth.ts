@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import { z } from "zod";
-import { registerUser, authenticateUser, issueToken } from "../services/authService";
-import { requireAuth } from "../middleware/auth";
+import { registerUser, authenticateUser, issueToken, verifyToken } from "../services/authService";
+import { findUserById } from "../repositories/userRepository";
 import { env } from "../config/env";
 
 const registerSchema = z.object({
@@ -56,8 +56,35 @@ export const registerAuthRoutes = (app: Router) => {
     res.status(204).end();
   });
 
-  app.get("/me", requireAuth, async (req: Request, res: Response) => {
-    if (!req.user) return res.status(401).json({ error: "Unauthorized" });
-    res.json({ id: req.user.id, fullName: req.user.full_name, email: req.user.email });
+  app.get("/me", async (req: Request, res: Response) => {
+    const token = req.cookies?.token;
+    if (!token) return res.json(null);
+
+    try {
+      const payload = verifyToken(token);
+      const user = await findUserById(payload.sub);
+      if (!user) return res.json(null);
+      return res.json({ id: user.id, fullName: user.full_name, email: user.email });
+    } catch (error) {
+      const err = error as Error;
+
+      // Check if it's a JWT-related error (expected auth failures)
+      if (err.name === 'TokenExpiredError' ||
+          err.name === 'JsonWebTokenError' ||
+          err.name === 'NotBeforeError') {
+        // Expected token verification failures - don't log, just return null
+        return res.json(null);
+      }
+
+      // Unexpected errors - log them for debugging
+      console.error("[AUTH /me] Unexpected error during token verification:", {
+        error: err.message,
+        stack: err.stack,
+        tokenLength: token?.length || 0,
+        timestamp: new Date().toISOString()
+      });
+
+      return res.json(null);
+    }
   });
 };

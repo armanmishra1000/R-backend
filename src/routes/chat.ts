@@ -13,13 +13,14 @@ import type { ChatMessage } from "../types/chat";
 export function registerChatRoute(app: Router) {
   app.post("/chat", requireAuth, async (req: Request, res: Response) => {
     const { messages } = req.body as { messages: ChatMessage[] };
-    console.log("[CHAT ROUTE] → Received request with", messages.length, "messages");
-    console.log("[CHAT ROUTE] → Last message:", messages[messages.length - 1]);
 
     if (!Array.isArray(messages)) {
       console.error("[CHAT ROUTE] → Invalid request: messages not array");
       return res.status(400).json({ error: "messages must be an array" });
     }
+
+    console.log("[CHAT ROUTE] → Received request with", messages.length, "messages");
+    console.log("[CHAT ROUTE] → Last message:", messages[messages.length - 1]);
 
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache, no-transform");
